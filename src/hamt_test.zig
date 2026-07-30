@@ -220,6 +220,84 @@ test "HashMap: remove from large map" {
     try testing.expectEqual(@as(i32, 510), m2.get(51).?);
 }
 
+test "HashMap: cross-validate against AutoHashMap oracle" {
+    var arena = std.heap.ArenaAllocator.init(std.testing.allocator);
+    defer arena.deinit();
+    const aa = arena.allocator();
+
+    var zmap = H.empty(aa);
+    defer zmap.deinit();
+    var oracle = std.AutoHashMap(i32, i32).init(aa);
+    defer oracle.deinit();
+
+    var rng = std.Random.DefaultPrng.init(42);
+    const rand = rng.random();
+
+    var i: usize = 0;
+    while (i < 500) : (i += 1) {
+        const key: i32 = rand.intRangeLessThan(i32, 0, 100);
+        const op = rand.intRangeLessThan(u8, 0, 4);
+        switch (op) {
+            0, 1 => { // put
+                const val: i32 = rand.int(i32);
+                zmap = try zmap.put(key, val);
+                try oracle.put(key, val);
+            },
+            2 => { // get
+                const z = zmap.get(key);
+                const o = oracle.get(key);
+                try testing.expectEqual(o, z);
+            },
+            3 => { // remove
+                zmap = zmap.remove(key) catch zmap; // may not exist
+                _ = oracle.remove(key);
+            },
+            else => unreachable,
+        }
+    }
+
+    // Verify full contents match
+    var oracle_keys = std.AutoHashMap(i32, void).init(aa);
+    defer oracle_keys.deinit();
+    var oracle_count: usize = 0;
+    var oit = oracle.iterator();
+    while (oit.next()) |e| : (oracle_count += 1) {
+        try oracle_keys.put(e.key_ptr.*, {});
+    }
+
+    var zcount: usize = 0;
+    var extra: usize = 0;
+    var zit = zmap.iterator();
+    while (zit.next()) |zentry| : (zcount += 1) {
+        if (!oracle_keys.contains(zentry.key)) {
+            std.debug.print("  EXTRA: zimple has key {d}, oracle does not\n", .{zentry.key});
+            extra += 1;
+        }
+    }
+
+    var missing: usize = 0;
+    var zit2 = zmap.iterator();
+    var zkeys = std.AutoHashMap(i32, void).init(aa);
+    defer zkeys.deinit();
+    while (zit2.next()) |zentry| try zkeys.put(zentry.key, {});
+    var oit2 = oracle.iterator();
+    while (oit2.next()) |e| {
+        if (!zkeys.contains(e.key_ptr.*)) {
+            std.debug.print("  MISSING: oracle has key {d} → {d}, zimple does not\n", .{ e.key_ptr.*, e.value_ptr.* });
+            missing += 1;
+        }
+    }
+
+    if (zcount != oracle_count or extra > 0 or missing > 0) {
+        std.debug.print("  counts: oracle={d} zimple={d} extra={d} missing={d}\n", .{ oracle_count, zcount, extra, missing });
+    }
+    try testing.expectEqual(oracle_count, zcount);
+    var it = oracle.iterator();
+    while (it.next()) |entry| {
+        try testing.expectEqual(entry.value_ptr.*, zmap.get(entry.key_ptr.*).?);
+    }
+}
+
 test "HashMap: empty iterator" {
     var arena = std.heap.ArenaAllocator.init(std.testing.allocator);
     defer arena.deinit();
