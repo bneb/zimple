@@ -92,12 +92,12 @@ src/
 ├── closure.zig    Typed closures
 ```
 
-131 tests. Zero leaks.
+138 tests. Zero leaks.
 
 ## Build
 
 ```bash
-zig build test          # 131 tests
+zig build test          # 138 tests
 zig build compare       # LOC comparison (2 benchmarks)
 zig build compare-perf  # Performance comparison
 ```
