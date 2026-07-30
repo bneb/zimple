@@ -91,15 +91,69 @@ pub fn main(init: std.process.Init) !void {
     io_g = init.io;
     try setup();
     
-    std.debug.print("\n=== Single-Threaded HAMT Performance (N={d}, ReleaseFast) ===\n\n", .{N});
+    std.debug.print("\n=== HAMT Performance (N={d}, ReleaseFast) ===\n\n", .{N});
     std.debug.print("  {s:<20} {s:>10} {s:>10} {s:>7}\n", .{ "benchmark", "min(us)", "avg(us)", "ratio" });
     std.debug.print("  {s:-<20} {s:-<10} {s:-<10} {s:-<7}\n", .{ "", "", "", "" });
 
-    const z = try timeOne(benchZigGet);
-    const m = try timeOne(benchZimpleGet);
-    const m_bulk = try timeOne(benchZimpleBulkGet);
-    
-    std.debug.print("  zig-get              {d:>10.1} {d:>10.1}\n", .{ z.min, z.avg });
-    std.debug.print("  zimple-get           {d:>10.1} {d:>10.1}  {d:.2}x\n", .{ m.min, m.avg, m.avg / z.avg });
-    std.debug.print("  zimple-bulkGet(AMAC) {d:>10.1} {d:>10.1}  {d:.2}x\n\n", .{ m_bulk.min, m_bulk.avg, m_bulk.avg / z.avg });
+    {
+        const z = try timeOne(benchZigPut);
+        const m = try timeOne(benchZimplePut);
+        std.debug.print("  zig-put              {d:>10.1} {d:>10.1}     —\n", .{ z.min, z.avg });
+        std.debug.print("  zimple-put           {d:>10.1} {d:>10.1}  {d:.1}x\n\n", .{ m.min, m.avg, m.avg / z.avg });
+    }
+    {
+        const z = try timeOne(benchZigGet);
+        const m = try timeOne(benchZimpleGet);
+        std.debug.print("  zig-get              {d:>10.1} {d:>10.1}     —\n", .{ z.min, z.avg });
+        std.debug.print("  zimple-get           {d:>10.1} {d:>10.1}  {d:.1}x\n\n", .{ m.min, m.avg, m.avg / z.avg });
+    }
+    {
+        const z = try timeOne(benchZigPutRemove);
+        const m = try timeOne(benchZimplePutRemove);
+        std.debug.print("  zig-remove           {d:>10.1} {d:>10.1}     —\n", .{ z.min, z.avg });
+        std.debug.print("  zimple-remove        {d:>10.1} {d:>10.1}  {d:.1}x\n\n", .{ m.min, m.avg, m.avg / z.avg });
+    }
+}
+
+fn benchZigPutRemove() !void {
+    var m = ZMap.init(alloc_g);
+    defer m.deinit();
+    for (keys, 0..) |k, i| { try m.put(k, @intCast(i)); }
+    for (keys) |k| { _ = m.remove(k); }
+}
+
+fn benchZimplePutRemove() !void {
+    var arena = std.heap.ArenaAllocator.init(alloc_g);
+    defer arena.deinit();
+    var m = HMap.empty(arena.allocator());
+    for (keys, 0..) |k, i| { m = try m.put(k, @intCast(i)); }
+    for (keys) |k| { m = m.remove(k) catch m; }
+}
+
+fn benchZigPut() !void {
+    var m = ZMap.init(alloc_g);
+    defer m.deinit();
+    for (keys, 0..) |k, i| { try m.put(k, @intCast(i)); }
+}
+
+fn benchZimplePut() !void {
+    var arena = std.heap.ArenaAllocator.init(alloc_g);
+    defer arena.deinit();
+    var m = HMap.empty(arena.allocator());
+    for (keys, 0..) |k, i| { m = try m.put(k, @intCast(i)); }
+}
+
+fn benchZigRemove() !void {
+    var m = ZMap.init(alloc_g);
+    defer m.deinit();
+    for (keys, 0..) |k, i| { try m.put(k, @intCast(i)); }
+    for (keys) |k| { _ = m.remove(k); }
+}
+
+fn benchZimpleRemove() !void {
+    var arena = std.heap.ArenaAllocator.init(alloc_g);
+    defer arena.deinit();
+    var m = HMap.empty(arena.allocator());
+    for (keys, 0..) |k, i| { m = try m.put(k, @intCast(i)); }
+    for (keys) |k| { m = m.remove(k) catch m; }
 }
