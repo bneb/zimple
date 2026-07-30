@@ -71,7 +71,7 @@ Arena allocation gives you persistent data structures with:
 - No runtime dependency
 - No GC pauses during computation
 - 3x better memory density than a boxed FP language
-- O(pages) teardown instead of O(nodes)
+- Arena teardown frees backing pages directly, without walking the node tree
 
 OCaml native compilation has been tuned for this since before Zig existed. Zig is slower at allocation. It is faster at memory density. It needs no runtime.
 

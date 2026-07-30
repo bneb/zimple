@@ -2,7 +2,7 @@ const std = @import("std");
 const list_mod = @import("list.zig");
 const vec_mod = @import("vector.zig");
 
-/// Create an arena, run the pipeline function, tear down the arena in O(1).
+/// Create an arena, run the pipeline function, tear down the arena in one call.
 /// The pipeline receives the arena's allocator and must return an "unboxed"
 /// value — i.e., a value containing NO pointers into the arena.
 ///
