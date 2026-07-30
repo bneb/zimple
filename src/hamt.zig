@@ -292,12 +292,7 @@ pub fn HashMap(comptime K: type, comptime V: type, comptime ctx: HashContext(K))
                         internal.bitmap & ~mask;
                     slots[idx] = new_child;
 
-                    // Collapse: only one child left → promote it
                     const child_count = @popCount(new_bitmap);
-                    if (child_count == 1) {
-                        const remaining_idx = @ctz(new_bitmap);
-                        return slots[remaining_idx];
-                    }
                     if (child_count == 0) return null;
                     const nr = try allocator.create(Node);
                     nr.* = .{ .internal = .{ .bitmap = new_bitmap, .slots = slots } };
