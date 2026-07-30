@@ -1,3 +1,6 @@
+// Persistent hash array mapped trie. 32-way branching, O(log₃₂ N).
+// Structural sharing — put/remove return new maps. Custom hash/equality
+// via HashContext. Use autoHash for built-in types.
 const std = @import("std");
 
 pub fn HashContext(comptime K: type) type {

@@ -1,3 +1,5 @@
+// Type-inferred wrappers. Eliminate redundant type parameters
+// from combinator calls. The compiler already knows the types.
 const std = @import("std");
 const vec_mod = @import("vector.zig");
 const c = @import("combinators.zig");

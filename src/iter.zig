@@ -1,3 +1,6 @@
+// Lazy iterator wrappers for persistent Vector.
+// mapIter/filterIter compose without allocating. collect/fold
+// materialize the result.
 const std = @import("std");
 const vec_mod = @import("vector.zig");
 

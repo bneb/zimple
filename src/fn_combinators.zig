@@ -1,3 +1,5 @@
+// Function combinators. compose, curry, wrap, memo, counted.
+// All return plain struct callables — compose with everything.
 const std = @import("std");
 
 /// Compose two unary callables: `compose(f, g).call(x) = f.call(g.call(x))`.

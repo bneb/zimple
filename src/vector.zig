@@ -1,3 +1,6 @@
+// Persistent bitmapped trie vector. 32-way branching, O(log₃₂ N).
+// Structural sharing — set/pushBack return new vectors, unchanged
+// subtrees shared. Bottom-up fromSlice builder for batch construction.
 const std = @import("std");
 
 /// Persistent bitmapped trie vector with structural sharing.

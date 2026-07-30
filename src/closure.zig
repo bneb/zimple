@@ -1,3 +1,5 @@
+// Typed closures with zero-overhead environment storage.
+// Env stored by value — sizeof(Closure) == sizeof(Env) + sizeof(fn ptr).
 const std = @import("std");
 
 /// Typed unary closure — a function pointer paired with its captured

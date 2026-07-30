@@ -12,12 +12,6 @@ pub const hashset = @import("hashset.zig");
 pub const queue = @import("queue.zig");
 pub const iter = @import("iter.zig");
 pub const lazy = @import("lazy.zig");
-pub const amac = @import("amac.zig");
-pub const par = @import("par.zig");
-pub const AmacEngine = amac.AmacEngine;
-pub const ThreadPoolExecutor = par.ThreadPoolExecutor;
-pub const parReduce = par.parReduce;
-pub const parMap = par.parMap;
 
 // ── Flat re-exports for ergonomic use ──
 
@@ -93,7 +87,4 @@ test {
     _ = queue;
     _ = iter;
     _ = lazy;
-    _ = amac;
-    _ = par;
-    _ = @import("simd_test.zig");
 }

@@ -1,3 +1,5 @@
+// Persistent two-list queue. O(1) amortized push/pop.
+// Structural sharing — push returns new queue, unchanged front shared.
 const std = @import("std");
 const list_mod = @import("list.zig");
 

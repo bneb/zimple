@@ -1,3 +1,5 @@
+// Comptime-exhaustive pattern matching for lists and
+// two-variant tagged unions. Zero runtime cost.
 const std = @import("std");
 const list_mod = @import("list.zig");
 const vec_mod = @import("vector.zig");

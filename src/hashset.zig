@@ -1,3 +1,5 @@
+// Persistent HashSet. Wraps HashMap with void values.
+// Structural sharing — insert/remove return new sets.
 const std = @import("std");
 const hamt = @import("hamt.zig");
 

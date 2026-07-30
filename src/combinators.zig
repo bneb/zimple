@@ -1,3 +1,5 @@
+// Combinators for persistent List and Vector.
+// map, filter, reduce, bind. Batch-optimized for Vector.
 const std = @import("std");
 const list_mod = @import("list.zig");
 const vec_mod = @import("vector.zig");

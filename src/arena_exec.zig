@@ -1,3 +1,5 @@
+// Scoped arena execution. Allocate intermediate persistent
+// structures in an arena, free everything in one call.
 const std = @import("std");
 const list_mod = @import("list.zig");
 const vec_mod = @import("vector.zig");

@@ -1,3 +1,5 @@
+// Persistent cons-list. O(1) prepend, structural sharing.
+// All empty lists share a single comptime nil sentinel.
 const std = @import("std");
 
 /// A persistent, immutable singly-linked list with structural sharing.
