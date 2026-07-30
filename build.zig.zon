@@ -1,12 +1,14 @@
 .{
     .name = .zimple,
     .version = "0.1.0",
-    .fingerprint = 0xe6746ccaf15e90b7,
+    .fingerprint = 0xe6746ccadb5591bd,
     .minimum_zig_version = "0.16.0",
     .dependencies = .{},
     .paths = .{
         "build.zig",
         "build.zig.zon",
         "src",
+        "bench",
+        "examples",
     },
 }
